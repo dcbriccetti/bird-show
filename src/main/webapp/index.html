@@ -1,16 +1,23 @@
 <lift:surround with="default" at="content">
 
-<lift:Pictures.render>
-    <p>Pictures tagged with <tagcol:tag/></p>
-    <tagcol:photos>
-        <photo:list>
-            <div style="margin-top: 1em">
-                <item:img/><br/>
-                <item:title/>
-            </div>
-        </photo:list>
-    </tagcol:photos>
-</lift:Pictures.render>
+    <lift:Pictures.render>
+        <p>Pictures tagged with <tagcol:tag/></p>
+        <tagcol:photos>
+            <photo:list>
+                <div style="margin-top: 1em">
+                    <item:img/><br/>
+                    <item:title/>
+                </div>
+            </photo:list>
+        </tagcol:photos>
+    </lift:Pictures.render>
+        
+    <lift:Pictures.setSelect form="POST">
+        <br/>
+        Select a set<br/>
+        <entry:sets/><br/> 
+        <entry:submit/>
+    </lift:Pictures.setSelect>
     
 </lift:surround>
 

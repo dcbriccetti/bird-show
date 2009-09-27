@@ -11,12 +11,17 @@ object Flickr {
   val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
     
   val id = getFromFlickr("people.findByUsername&username=" + userName) \ "user" \ "@nsid"
-  val tags = getFromFlickr("tags.getListUser&user_id=" + id) \\ "tag"
-  val tagStrings = tags map(_.text)
+  val tags = (getFromFlickr("tags.getListUser&user_id=" + id) \\ "tag") map(_.text)
+  val sets = getFromFlickr("photosets.getList&user_id=" + id) \ "photosets" \ "photoset"
 
-  def getTag = tagStrings(new Random().nextInt(tagStrings.length))
+  def getTag = tags(new Random().nextInt(tags.length))
+  def getTags = tags
 
   def getPhotos(tag: String) = getFromFlickr("photos.search&user_id=" + id + "&tags=" + tag) \ "photos" \ "photo"
+  def getAllPhotos = getFromFlickr("photos.search&user_id=" + id + "&per_page=500") \ "photos" \ "photo"
+  def getSetPhotos(setId: String) = getFromFlickr("photosets.getPhotos&user_id=" + id + 
+          "&photoset_id=" + setId + "&per_page=500") \ "photos" \ "photo"
+  def getSets = sets
 
   private def getFromFlickr(urlBody: String) = XmlFetcher.get(urlPart1 + urlBody + apiKey)
 }
