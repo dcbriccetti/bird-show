@@ -1,6 +1,6 @@
 package birdshow.model
 
-import java.net.URL
+import java.net.{HttpURLConnection, URL}
 import scala.util.Random
 import xml.{Node, XML}
 
@@ -29,11 +29,10 @@ object Flickr {
 object XmlFetcher {
   def get(urlString: String): Node = {
     println(urlString)
-    val conn = new URL(urlString).openConnection
-    val status = conn.getHeaderFields.get("Status") // Looking for "200 OK"
-    val statusCode = if (status == null || status.size == 0) 200 else
-      Integer.parseInt(status.get(0).split(" ")(0))
-    if (statusCode != 200) println(statusCode)
+    val conn = new URL(urlString).openConnection.asInstanceOf[HttpURLConnection]
+    val statusCode = conn.getResponseCode
+    if (statusCode != 200)
+      println(statusCode)
     XML.load(conn.getInputStream())
   }
 }
