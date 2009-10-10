@@ -18,20 +18,10 @@ class Boot {
     LiftRules.addToPackages("birdshow")
 
     // Build SiteMap
-    val entries = List(Menu(Loc("Home", List("index"), "Home")))
+    val entries = List(
+        Menu(Loc("Home", List("index"), "Home")), 
+        Menu(Loc("Galleries", List("galleries"), "Galleries")))
     LiftRules.setSiteMap(SiteMap(entries:_*))
-
-    /*
-     * Show the spinny image when an Ajax call starts
-     */
-    LiftRules.ajaxStart =
-      Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
-
-    /*
-     * Make the spinny image go away when it ends
-     */
-    LiftRules.ajaxEnd =
-      Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
     LiftRules.early.append(makeUtf8)
   }

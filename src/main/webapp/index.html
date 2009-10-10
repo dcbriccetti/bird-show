@@ -1,7 +1,7 @@
 <lift:surround with="default" at="content">
 
     <lift:Pictures.render>
-        <p>Pictures tagged with <tagcol:tag/></p>
+        <p>Pictures tagged with <tagcol:title/></p>
         <tagcol:photos>
             <photo:list>
                 <div style="margin-top: 1em">
@@ -14,8 +14,8 @@
         
     <lift:Pictures.setSelect form="POST">
         <br/>
-        Select a set<br/>
-        <entry:sets/><br/> 
+        Select a gallery<br/>
+        <entry:galleries/><br/> 
         <entry:submit/>
     </lift:Pictures.setSelect>
     

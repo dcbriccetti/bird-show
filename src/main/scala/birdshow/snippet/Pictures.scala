@@ -1,51 +1,56 @@
 package birdshow.snippet
 
-import model.Flickr
-import net.liftweb.http.SHtml
-import net.liftweb.util.Empty
+import birdshow.model.Flickr
 import net.liftweb.util.Helpers._
 import xml.{Node, Text, NodeSeq}
+import net.liftweb.http.{RequestVar, SHtml}
+import net.liftweb.util.{Full}
 
 class Pictures {
-  println("Pictures new instance")
+  println("new Pictures")
   val tag = Flickr.getTag
-  var selectedSet = ""
+  object selectedSet extends RequestVar("")
   
   def render(content: NodeSeq): NodeSeq = 
     bind("tagcol", content,
-      "tag" -> Text(tag),
+      "title" -> Text(tag),
       "photos" -> getPhotos.flatMap(photo => 
         bind("item", chooseTemplate("photo", "list", content),
-          "img" -> <img src={url(photo)}/>, 
+          "img" -> <img src={Flickr.url(photo, "id")}/>, 
           "title" -> (photo \ "@title")
           )))
   
+  def showGalleries(content: NodeSeq): NodeSeq = 
+    bind("tagcol", content,
+      "galleries" -> Flickr.getSets.flatMap(photoSet => 
+        bind("item", chooseTemplate("photo", "list", content),
+          "img" -> <img src={Flickr.url(photoSet, "primary")}/>, 
+          "title" -> (photoSet \ "title").text
+          )))
+  
   def tags(content: NodeSeq): NodeSeq = <p>{Flickr.getTags.mkString(", ")}</p>
+  
   def titles(content: NodeSeq): NodeSeq = <p>{Flickr.getAllPhotos.map(_ \ "@title").mkString(", ")}</p>
+  
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
+  
   def setSelect(xhtml: NodeSeq): NodeSeq = {
-    def doNothing() {println("Selected set now " + selectedSet)}
+    def doNothing() {println("Selected gallery now " + selectedSet)}
     bind("entry", xhtml, 
-      "sets" -> SHtml.select(getSetTitles, Empty, 
-         selectedSet = _, "class" -> "myselect"), 
+      "galleries" -> SHtml.select(getSetTitles, Full(selectedSet.is), 
+         selectedSet(_), "class" -> "myselect"), 
       "submit" -> SHtml.submit("Select", doNothing)) 
   }
   
-  private def url(p: Node) = "http://farm" + (p \ "@farm") + ".static.flickr.com/" + 
-      (p \ "@server") + "/" + (p \ "@id") + "_" + (p \ "@secret") + "_m.jpg"
-
   private def getSetTitles: List[Tuple2[String,String]] = {
-    // I’m making a new list because I don’t know how to sort a Seq[String]
-    var titles = List[Tuple2[String,String]]()
-    Flickr.getSets.foreach(s => titles ::= ((s \ "@id").text, (s \ "title").text))
-    titles.sort(_._2 < _._2)
+    Flickr.getSets.map(s => ((s \ "@id").text, (s \ "title").text)).toList.sort(_._2 < _._2)
   }
   
   private def getPhotos: NodeSeq = {
-    println("getPhotos, selectedSet: " + selectedSet)
-    if (selectedSet == "") 
+    println("getPhotos, selectedSet: " + selectedSet.is)
+    if (selectedSet.is == "") 
       Flickr.getPhotos(tag) 
     else 
-      Flickr.getSetPhotos(selectedSet) 
+      Flickr.getSetPhotos(selectedSet.is) 
   }
 }
