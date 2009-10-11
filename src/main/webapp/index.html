@@ -1,6 +1,6 @@
 <lift:surround with="default" at="content">
 
-    <lift:Pictures.render>
+    <lift:Pictures.showRandomTag>
         <p>Pictures tagged with <tagcol:title/></p>
         <tagcol:photos>
             <photo:list>
@@ -10,14 +10,7 @@
                 </div>
             </photo:list>
         </tagcol:photos>
-    </lift:Pictures.render>
+    </lift:Pictures.showRandomTag>
         
-    <lift:Pictures.setSelect form="POST">
-        <br/>
-        Select a gallery<br/>
-        <entry:galleries/><br/> 
-        <entry:submit/>
-    </lift:Pictures.setSelect>
-    
 </lift:surround>
 

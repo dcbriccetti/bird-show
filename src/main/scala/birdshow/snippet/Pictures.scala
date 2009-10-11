@@ -2,16 +2,14 @@ package birdshow.snippet
 
 import birdshow.model.Flickr
 import net.liftweb.util.Helpers._
-import xml.{Node, Text, NodeSeq}
-import net.liftweb.http.{RequestVar, SHtml}
+import xml.{Text, NodeSeq}
 import net.liftweb.util.{Full}
+import net.liftweb.http.{S}
 
 class Pictures {
-  println("new Pictures")
   val tag = Flickr.getTag
-  object selectedSet extends RequestVar("")
   
-  def render(content: NodeSeq): NodeSeq = 
+  def showRandomTag(content: NodeSeq): NodeSeq = 
     bind("tagcol", content,
       "title" -> Text(tag),
       "photos" -> getPhotos.flatMap(photo => 
@@ -20,13 +18,38 @@ class Pictures {
           "title" -> (photo \ "@title")
           )))
   
-  def showGalleries(content: NodeSeq): NodeSeq = 
-    bind("tagcol", content,
-      "galleries" -> Flickr.getSets.flatMap(photoSet => 
-        bind("item", chooseTemplate("photo", "list", content),
-          "img" -> <img src={Flickr.url(photoSet, "primary")}/>, 
-          "title" -> (photoSet \ "title").text
-          )))
+  def showGalleries(content: NodeSeq): NodeSeq = {
+    
+    def bindGallery(content: NodeSeq, id: String): NodeSeq = {
+      bind("gal", content,
+        "heading" -> <h3>{Flickr.getSets.find(s => (s \ "@id").text == id) match {
+          case Some(photoSet) => (photoSet \ "title").text
+          case _ => ""
+        }}</h3>,
+        "showAll" -> <a href="?">Show gallery index</a>,
+        "galleries" -> Flickr.getSetPhotos(id).flatMap(photo => 
+          bind("item", chooseTemplate("photo", "list", content),
+            "img" -> <img src={Flickr.url(photo, "id")}/>, 
+            "title" -> (photo \ "@title").text
+            )))
+    }
+    
+    def bindGalleries(content: NodeSeq): NodeSeq = {
+      bind("gal", content,
+        "heading" -> <h3>All Galleries</h3>,
+        "showAll" -> <span/>,
+        "galleries" -> Flickr.getSets.flatMap(photoSet => 
+          bind("item", chooseTemplate("photo", "list", content),
+            "img" -> <a href={"?id=" + ((photoSet \ "@id").text)}><img src={Flickr.url(photoSet, "primary")}/></a>, 
+            "title" -> (photoSet \ "title").text
+            )))
+    }
+    
+    S.param("id") match {
+      case Full(id) => bindGallery(content, id)
+      case _ => bindGalleries(content)
+    }
+  }
   
   def tags(content: NodeSeq): NodeSeq = <p>{Flickr.getTags.mkString(", ")}</p>
   
@@ -34,23 +57,9 @@ class Pictures {
   
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
   
-  def setSelect(xhtml: NodeSeq): NodeSeq = {
-    def doNothing() {println("Selected gallery now " + selectedSet)}
-    bind("entry", xhtml, 
-      "galleries" -> SHtml.select(getSetTitles, Full(selectedSet.is), 
-         selectedSet(_), "class" -> "myselect"), 
-      "submit" -> SHtml.submit("Select", doNothing)) 
-  }
-  
   private def getSetTitles: List[Tuple2[String,String]] = {
     Flickr.getSets.map(s => ((s \ "@id").text, (s \ "title").text)).toList.sort(_._2 < _._2)
   }
   
-  private def getPhotos: NodeSeq = {
-    println("getPhotos, selectedSet: " + selectedSet.is)
-    if (selectedSet.is == "") 
-      Flickr.getPhotos(tag) 
-    else 
-      Flickr.getSetPhotos(selectedSet.is) 
-  }
+  private def getPhotos: NodeSeq = Flickr.getPhotos(tag)
 }
