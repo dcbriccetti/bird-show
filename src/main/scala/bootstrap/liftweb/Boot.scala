@@ -20,7 +20,9 @@ class Boot {
     // Build SiteMap
     val entries = List(
         Menu(Loc("Home", List("index"), "Home")), 
-        Menu(Loc("Galleries", List("galleries"), "Galleries")))
+        Menu(Loc("Biography", List("bio"), "Biography")), 
+        Menu(Loc("Galleries", List("galleries"), "Galleries"))
+      )
     LiftRules.setSiteMap(SiteMap(entries:_*))
 
     LiftRules.early.append(makeUtf8)

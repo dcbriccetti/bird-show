@@ -2,46 +2,44 @@ package birdshow.snippet
 
 import birdshow.model.Flickr
 import net.liftweb.util.Helpers._
-import xml.{Text, NodeSeq}
+import xml.{Text, Node, NodeSeq}
 import net.liftweb.util.{Full}
 import net.liftweb.http.{S}
 
 class Pictures {
-  val tag = Flickr.getTag
-  
-  def showRandomTag(content: NodeSeq): NodeSeq = 
-    bind("tagcol", content,
-      "title" -> Text(tag),
-      "photos" -> getPhotos.flatMap(photo => 
-        bind("item", chooseTemplate("photo", "list", content),
-          "img" -> <img src={Flickr.url(photo, "id")}/>, 
-          "title" -> (photo \ "@title")
-          )))
   
   def showGalleries(content: NodeSeq): NodeSeq = {
     
     def bindGallery(content: NodeSeq, id: String): NodeSeq = {
       bind("gal", content,
-        "heading" -> <h3>{Flickr.getSets.find(s => (s \ "@id").text == id) match {
+        "heading" -> Text(Flickr.getSets.find(s => (s \ "@id").text == id) match {
           case Some(photoSet) => (photoSet \ "title").text
           case _ => ""
-        }}</h3>,
+        }),
         "showAll" -> <a href="?">Show gallery index</a>,
-        "galleries" -> Flickr.getSetPhotos(id).flatMap(photo => 
+        "galleries" -> group(Flickr.getSetPhotos(id)).flatMap(pGroup => 
           bind("item", chooseTemplate("photo", "list", content),
-            "img" -> <img src={Flickr.url(photo, "id")}/>, 
-            "title" -> (photo \ "@title").text
+            "img1"   -> pImg(pGroup._1), 
+            "title1" -> pTitle(pGroup._1),
+            "img2"   -> pImg(pGroup._2), 
+            "title2" -> pTitle(pGroup._2),
+            "img3"   -> pImg(pGroup._3), 
+            "title3" -> pTitle(pGroup._3)
             )))
     }
     
     def bindGalleries(content: NodeSeq): NodeSeq = {
       bind("gal", content,
-        "heading" -> <h3>All Galleries</h3>,
+        "heading" -> "",
         "showAll" -> <span/>,
-        "galleries" -> Flickr.getSets.flatMap(photoSet => 
+        "galleries" -> group(Flickr.getSets).flatMap(psGroup => 
           bind("item", chooseTemplate("photo", "list", content),
-            "img" -> <a href={"?id=" + ((photoSet \ "@id").text)}><img src={Flickr.url(photoSet, "primary")}/></a>, 
-            "title" -> (photoSet \ "title").text
+            "img1"   -> psAnchor(psGroup._1), 
+            "title1" -> psTitle(psGroup._1),
+            "img2"   -> psAnchor(psGroup._2), 
+            "title2" -> psTitle(psGroup._2),
+            "img3"   -> psAnchor(psGroup._3), 
+            "title3" -> psTitle(psGroup._3)
             )))
     }
     
@@ -51,15 +49,45 @@ class Pictures {
     }
   }
   
-  def tags(content: NodeSeq): NodeSeq = <p>{Flickr.getTags.mkString(", ")}</p>
-  
   def titles(content: NodeSeq): NodeSeq = <p>{Flickr.getAllPhotos.map(_ \ "@title").mkString(", ")}</p>
   
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
+  
+  type Row[T] = Tuple3[Option[T], Option[T], Option[T]]
+  
+  def group[T](items: Seq[T]): Seq[Row[T]] = {
+    def hss(it: Iterator[T]) = if (it.hasNext) Some(it.next) else None
+    val it = items.elements
+    var result = List[Row[T]]()
+    while(it.hasNext) {
+      result = result ::: List((hss(it), hss(it), hss(it)))
+    }
+    result
+  }
+  
+  private def pImg(photoSet: Option[Node]): NodeSeq = photoSet match {
+    case Some(p) => <img src={Flickr.url(p, "id")}/>
+    case None => <p/>
+  }
+  
+  private def pTitle(photoSet: Option[Node]): String = photoSet match {
+    case Some(ps) => (ps \ "@title").text
+    case None => ""
+  }
+  
+  private def psAnchor(photoSet: Option[Node]): NodeSeq = photoSet match {
+    case Some(ps) => 
+      <a href={"?id=" + ((ps \ "@id").text)}><img src={Flickr.url(ps, "primary")}/></a>
+    case None => <p/>
+  }
+  
+  private def psTitle(photoSet: Option[Node]): String = photoSet match {
+    case Some(ps) => (ps \ "title").text
+    case None => ""
+  }
   
   private def getSetTitles: List[Tuple2[String,String]] = {
     Flickr.getSets.map(s => ((s \ "@id").text, (s \ "title").text)).toList.sort(_._2 < _._2)
   }
   
-  private def getPhotos: NodeSeq = Flickr.getPhotos(tag)
 }

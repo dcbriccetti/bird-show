@@ -1,21 +1,21 @@
 package birdshow.model
 
 import java.net.{HttpURLConnection, URL}
-import scala.util.Random
 import xml.{NodeSeq, Node, XML}
 
 object Flickr {
   val userName = "Eleanor%20Briccetti"
+  val masterCollectionName = "Selected"
 
   val urlPart1 = "http://api.flickr.com/services/rest/?method=flickr."
   val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
     
   val id: NodeSeq = getFromFlickr("people.findByUsername&username=" + userName) \ "user" \ "@nsid"
-  val tags: Seq[String] = (getFromFlickr("tags.getListUser&user_id=" + id) \\ "tag") map(_.text)
-  val sets: NodeSeq = getFromFlickr("photosets.getList&user_id=" + id) \ "photosets" \ "photoset"
+  val collections: NodeSeq = getFromFlickr("collections.getTree&user_id=" + id) \\ "collection"
+  val setIds = ((collections filter(c => (c \ "@title") == "Selected")) \\ "set") map(_ \ "@id")
 
-  def getTag = tags(new Random().nextInt(tags.length))
-  def getTags = tags
+  val sets: NodeSeq = (getFromFlickr("photosets.getList&user_id=" + id) \ "photosets" \ "photoset") filter(
+          s => setIds.contains(s \\ "@id"))
 
   def getPhotos(tag: String) = getFromFlickr("photos.search&user_id=" + id + "&tags=" + tag) \ "photos" \ "photo"
   def getAllPhotos = getFromFlickr("photos.search&user_id=" + id + "&per_page=500") \ "photos" \ "photo"
