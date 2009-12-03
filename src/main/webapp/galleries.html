@@ -1,7 +1,13 @@
 <lift:surround with="default" at="content">
-
+    <lift:Pictures.search form="POST">
+        <search:text/>
+        <search:submit/>
+    </lift:Pictures.search>
+    
     <lift:Pictures.showGalleries>
-        <div class="galHead"><gal:heading/></div>
+        <div class="galHead">
+            <gal:heading/>
+        </div>
         <gal:showAll/>
         <table class="photos">
             <gal:galleries>
@@ -9,21 +15,27 @@
                     <tr>
                         <td>
                             <item:img1/>
-                            <div class="title"><item:title1/></div>
+                            <div class="title">
+                                <item:title1/>
+                            </div>
                         </td>
                         <td>
                             <item:img2/>
-                            <div class="title"><item:title2/></div>
+                            <div class="title">
+                                <item:title2/>
+                            </div>
                         </td>
                         <td>
                             <item:img3/>
-                            <div class="title"><item:title3/></div>
+                            <div class="title">
+                                <item:title3/>
+                            </div>
                         </td>
                     </tr>
                 </photo:list>
             </gal:galleries>
         </table>
     </lift:Pictures.showGalleries>
-        
+
 </lift:surround>
 
