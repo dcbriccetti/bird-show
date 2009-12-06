@@ -92,7 +92,10 @@ class Pictures extends Loggable {
 
   private def pImg(photoSet: Option[Node]): NodeSeq = photoSet match {
     case Some(p) =>
-      <img onclick={"BIRDSHOW.showBig('" + Flickr.url(p, "id", "") + "')"} src={Flickr.url(p, "id", "_m")}/>
+      <a href="#">
+        <img onclick={"BIRDSHOW.showBig('" + Flickr.url(p, "id", "") + "'); return false;"} 
+             src={Flickr.url(p, "id", "_m")}/>
+      </a>
     case None => <p/>
   }
   
