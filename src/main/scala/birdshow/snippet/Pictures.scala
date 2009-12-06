@@ -66,8 +66,6 @@ class Pictures extends Loggable {
       }
   }
   
-  def titles(content: NodeSeq): NodeSeq = <p>{Flickr.getAllPhotos.map(_ \ "@title").mkString(", ")}</p>
-  
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
   
   type Row[T] = Tuple3[Option[T], Option[T], Option[T]]
@@ -93,7 +91,8 @@ class Pictures extends Loggable {
       ))
 
   private def pImg(photoSet: Option[Node]): NodeSeq = photoSet match {
-    case Some(p) => <img src={Flickr.url(p, "id")}/>
+    case Some(p) =>
+      <img onclick={"BIRDSHOW.showBig('" + Flickr.url(p, "id", "") + "')"} src={Flickr.url(p, "id", "_m")}/>
     case None => <p/>
   }
   
@@ -104,7 +103,7 @@ class Pictures extends Loggable {
   
   private def psAnchor(photoSet: Option[Node]): NodeSeq = photoSet match {
     case Some(ps) => 
-      <a href={"?id=" + ((ps \ "@id").text)}><img src={Flickr.url(ps, "primary")}/></a>
+      <a href={"?id=" + ((ps \ "@id").text)}><img src={Flickr.url(ps, "primary", "_m")}/></a>
     case None => <p/>
   }
   

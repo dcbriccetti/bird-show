@@ -26,8 +26,8 @@ class Boot {
         Menu(Loc("Prints", List("prints"), "Prints"))
       )
     LiftRules.setSiteMap(SiteMap(entries:_*))
-
     LiftRules.early.append(makeUtf8)
+    LiftRules.enableLiftGC = false
   }
 
   /**

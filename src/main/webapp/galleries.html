@@ -1,9 +1,32 @@
 <lift:surround with="default" at="content">
+    <script type="text/javascript">
+        BIRDSHOW = {
+            urlShowing: "",
+            showBig: function(url) {
+                if (BIRDSHOW.urlShowing === url) {
+                    BIRDSHOW.hideBig();
+                } else {
+                    $('#bigImage').attr("src", url);
+                    $('#bigImageDiv').show('slow');
+                    BIRDSHOW.urlShowing = url
+                }
+            },
+            hideBig: function() {
+                $('#bigImageDiv').hide('slow');
+                BIRDSHOW.urlShowing = ""
+            }
+        };
+        $(document).ready(function() {
+            $('#bigImageDiv').hide();
+        })
+    </script>
     <lift:Pictures.search form="POST">
         <search:text/>
         <search:submit/>
     </lift:Pictures.search>
-    
+
+    <div id="bigImageDiv"><img id="bigImage" onclick="BIRDSHOW.hideBig();"/></div>
+
     <lift:Pictures.showGalleries>
         <div class="galHead">
             <gal:heading/>
