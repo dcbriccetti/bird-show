@@ -11,6 +11,10 @@
     <script id="json" src="/classpath/json.js" type="text/javascript"/>
     <style>
         /* <![CDATA[ */
+        body {
+            font-size: 100%;
+        }
+        
         .sidebar ul {
             margin: 0;
             padding: 0;
@@ -39,16 +43,24 @@
         table.photos td {
             text-align: center;
             vertical-align: middle;
-            margin-top: 2em;
-        }
-        
-        table.photos td div.title {
-            font-size: 160%;
+            padding: 2em 2em 0 0;
         }
         
         div.galHead {
             font-weight: bold;
-            font-size: 180%;
+            font-size: 140%;
+        }
+        
+        .slideshowCell {
+            text-align: center;
+        }
+        
+        table.priceList {
+            width: 30em;
+        }
+        
+        .photoCredit {
+            font-size: 75%;
         }
 
         /* ]]> */
@@ -56,14 +68,13 @@
 </head>
 <body>
 <div class="container">
-    <div class="column span-12 last" style="text-align: right">
+    <div class="column span-17 last" style="text-align: right">
         <h1 class="alt">Eleanor Briccetti Photography</h1>
     </div>
 
     <hr/>
 
     <div class="column span-3 colborder sidebar">
-        <hr class="space"/>
         <lift:Menu.builder/>
         <div>
             <lift:snippet type="msgs"/>
