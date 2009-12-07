@@ -5,7 +5,8 @@ import xml.{Text, Node, NodeSeq}
 import net.liftweb.util.{Full}
 import net.liftweb.http.{RequestVar, SHtml, S}
 import birdshow.model.Flickr
-import birdshow.util.Loggable
+import birdshow.model.flickr.PictureIdAndSizes
+import birdshow.util.{Group, Loggable}
 
 class Pictures extends Loggable {
   private object searchText extends RequestVar("")
@@ -37,7 +38,7 @@ class Pictures extends Loggable {
       bind("gal", content,
         "heading" -> "",
         "showAll" -> <span/>,
-        "galleries" -> group(Flickr.getSets).flatMap(psGroup => 
+        "galleries" -> Group.group(Flickr.getSets).flatMap(psGroup => 
           bind("item", chooseTemplate("photo", "list", content),
             "img1"   -> psAnchor(psGroup._1), 
             "title1" -> psTitle(psGroup._1),
@@ -67,20 +68,8 @@ class Pictures extends Loggable {
   
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
   
-  type Row[T] = Tuple3[Option[T], Option[T], Option[T]]
-  
-  def group[T](items: Seq[T]): Seq[Row[T]] = {
-    def hss(it: Iterator[T]) = if (it.hasNext) Some(it.next) else None
-    val it = items.elements
-    var result = List[Row[T]]()
-    while(it.hasNext) {
-      result = result ::: List((hss(it), hss(it), hss(it)))
-    }
-    result
-  }
-  
-  private def bindGroup(content: NodeSeq, photosAndSizes: Seq[Tuple2[Node, Node]]) = 
-    group(photosAndSizes).flatMap(pGroup => 
+  private def bindGroup(content: NodeSeq, photosAndSizes: Seq[Tuple2[Node, PictureIdAndSizes]]) = 
+    Group.group(photosAndSizes).flatMap(pGroup => 
     bind("item", chooseTemplate("photo", "list", content),
       "img1"   -> pImg(pGroup._1), 
       "title1" -> pTitle(pGroup._1),
@@ -92,28 +81,16 @@ class Pictures extends Loggable {
 
   private case class PrioritizedSource(val priority: Int, val source: String)
   
-  private def pImg(photoAndSize: Option[Tuple2[Node, Node]]): NodeSeq = photoAndSize match {
-    case Some((photo, sizesSeq)) =>
-      val PrtySmall = 3
-      val prioritizedSources = (sizesSeq \ "sizes" \ "size").map(s => {
-        val priority = (s \\ "@label").text match {
-          case "Square" => 6
-          case "Thumbnail" => 5
-          case "Original" => 4
-          case "Small" => PrtySmall
-          case "Medium" => 2
-          case "Large" => 1
-        }
-        PrioritizedSource(priority, (s \\ "@source").text)
-      }).toList.sort(_.priority < _.priority)
+  private def pImg(photoAndSize: Option[Tuple2[Node, PictureIdAndSizes]]): NodeSeq = photoAndSize match {
+    case Some((photo, pictureIdAndSizes)) =>
       <a href="#">
-        <img onclick={"BIRDSHOW.showBig('" + prioritizedSources(0).source + "'); return false;"} 
-            src={prioritizedSources.find(_.priority == PrtySmall).get.source}/>
+        <img onclick={"BIRDSHOW.showBig('" + pictureIdAndSizes.getPreferredSizeUrl + "'); return false;"} 
+            src={pictureIdAndSizes.getSmallSizeUrl}/>
       </a>
     case None => <p/>
   }
   
-  private def pTitle(photoSet: Option[Tuple2[Node, Node]]): String = photoSet match {
+  private def pTitle(photoSet: Option[Tuple2[Node, PictureIdAndSizes]]): String = photoSet match {
     case Some(ps) => (ps._1 \ "@title").text
     case None => ""
   }
