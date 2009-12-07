@@ -4,7 +4,9 @@
     <meta name="description" content=""/>
     <meta name="keywords" content=""/>
 
-    <title>Eleanor Briccetti Photography</title>
+    <lift:GeneralInfo.info>
+        <title><info:title/></title>
+    </lift:GeneralInfo.info>
     <lift:CSS.blueprint/>
     <lift:CSS.fancyType/>
     <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
@@ -89,7 +91,9 @@
 <body>
 <div class="container">
     <div class="column span-17 last" style="text-align: right">
-        <h1 class="alt">Eleanor Briccetti Photography</h1>
+        <lift:GeneralInfo.info>
+            <h1 class="alt"><info:title/></h1>
+        </lift:GeneralInfo.info>
     </div>
 
     <hr/>

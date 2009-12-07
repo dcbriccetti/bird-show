@@ -1,11 +1,11 @@
 package birdshow.snippet
 
-import birdshow.model.Flickr
 import net.liftweb.util.Helpers._
 import xml.{Text, Node, NodeSeq}
 import net.liftweb.util.{Full}
-import birdshow.util.Loggable
 import net.liftweb.http.{RequestVar, SHtml, S}
+import birdshow.model.Flickr
+import birdshow.util.Loggable
 
 class Pictures extends Loggable {
   private object searchText extends RequestVar("")
@@ -50,11 +50,10 @@ class Pictures extends Loggable {
     
     def bindSearchResults(content: NodeSeq): NodeSeq = {
       debug("bindGallery. searchText: " + searchText.is)
-      val xml: NodeSeq = Flickr.searchPhotos(searchText.is)
       bind("gal", content,
         "heading" -> Text("Results for " + searchText.is),
         "showAll" -> <a href="?">Show gallery index</a>,
-        "galleries" -> bindGroup(content, xml))
+        "galleries" -> bindGroup(content, Flickr.searchPhotos(searchText.is)))
     }
     
     if (searchText.is != "") 
@@ -80,7 +79,8 @@ class Pictures extends Loggable {
     result
   }
   
-  private def bindGroup(content: NodeSeq, xml: NodeSeq) = group(xml).flatMap(pGroup => 
+  private def bindGroup(content: NodeSeq, photosAndSizes: Seq[Tuple2[Node, Node]]) = 
+    group(photosAndSizes).flatMap(pGroup => 
     bind("item", chooseTemplate("photo", "list", content),
       "img1"   -> pImg(pGroup._1), 
       "title1" -> pTitle(pGroup._1),
@@ -90,17 +90,31 @@ class Pictures extends Loggable {
       "title3" -> pTitle(pGroup._3)
       ))
 
-  private def pImg(photoSet: Option[Node]): NodeSeq = photoSet match {
-    case Some(p) =>
+  private case class PrioritizedSource(val priority: Int, val source: String)
+  
+  private def pImg(photoAndSize: Option[Tuple2[Node, Node]]): NodeSeq = photoAndSize match {
+    case Some((photo, sizesSeq)) =>
+      val PrtySmall = 3
+      val prioritizedSources = (sizesSeq \ "sizes" \ "size").map(s => {
+        val priority = (s \\ "@label").text match {
+          case "Square" => 6
+          case "Thumbnail" => 5
+          case "Original" => 4
+          case "Small" => PrtySmall
+          case "Medium" => 2
+          case "Large" => 1
+        }
+        PrioritizedSource(priority, (s \\ "@source").text)
+      }).toList.sort(_.priority < _.priority)
       <a href="#">
-        <img onclick={"BIRDSHOW.showBig('" + Flickr.url(p, "id", "") + "'); return false;"} 
-             src={Flickr.url(p, "id", "_m")}/>
+        <img onclick={"BIRDSHOW.showBig('" + prioritizedSources(0).source + "'); return false;"} 
+            src={prioritizedSources.find(_.priority == PrtySmall).get.source}/>
       </a>
     case None => <p/>
   }
   
-  private def pTitle(photoSet: Option[Node]): String = photoSet match {
-    case Some(ps) => (ps \ "@title").text
+  private def pTitle(photoSet: Option[Tuple2[Node, Node]]): String = photoSet match {
+    case Some(ps) => (ps._1 \ "@title").text
     case None => ""
   }
   
