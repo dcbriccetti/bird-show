@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!DOCTYPE web-app
-        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+
     <context-param>
         <param-name>appTitle</param-name>
         <param-value>Eleanor Briccetti Photography</param-value>
@@ -24,7 +24,6 @@
         <description>The Filter that intercepts lift calls</description>
         <filter-class>net.liftweb.http.LiftFilter</filter-class>
     </filter>
-
 
     <filter-mapping>
         <filter-name>LiftFilter</filter-name>

@@ -28,6 +28,9 @@ class Boot {
     LiftRules.setSiteMap(SiteMap(entries:_*))
     LiftRules.early.append(makeUtf8)
     LiftRules.enableLiftGC = false
+    
+    Flickr.addUser(LiftRules.context.getInitParameter("flickrUserName"),
+      LiftRules.context.getInitParameter("flickrCollection"))
   }
 
   /**
@@ -38,5 +41,3 @@ class Boot {
   }
 
 }
-
-
