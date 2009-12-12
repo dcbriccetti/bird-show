@@ -30,7 +30,9 @@ class Boot {
     LiftRules.enableLiftGC = false
     
     Flickr.addUser(LiftRules.context.getInitParameter("flickrUserName"),
-      LiftRules.context.getInitParameter("flickrCollection"))
+      LiftRules.context.getInitParameter("flickrCollection"),
+      LiftRules.context.getInitParameter("flickrHomeSet"),
+      LiftRules.context.getInitParameter("flickrShowSet"))
   }
 
   /**

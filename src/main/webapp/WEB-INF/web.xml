@@ -17,6 +17,14 @@
         <param-name>flickrCollection</param-name>
         <param-value>Selected</param-value>
     </context-param>
+    <context-param>
+        <param-name>flickrHomeSet</param-name>
+        <param-value>Home</param-value>
+    </context-param>
+    <context-param>
+        <param-name>flickrShowSet</param-name>
+        <param-value>Shows</param-value>
+    </context-param>
 
     <filter>
         <filter-name>LiftFilter</filter-name>

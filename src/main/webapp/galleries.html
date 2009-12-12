@@ -1,25 +1,5 @@
 <lift:surround with="default" at="content">
-    <script type="text/javascript">
-        var BIRDSHOW = {
-            urlShowing: '',
-            showBig: function(url) {
-                if (BIRDSHOW.urlShowing === url) {
-                    BIRDSHOW.hideBig();
-                } else {
-                    $('#bigImage').attr('src', url);
-                    $('#bigImageDiv').show('slow');
-                    BIRDSHOW.urlShowing = url
-                }
-            },
-            hideBig: function() {
-                $('#bigImageDiv').hide('slow');
-                BIRDSHOW.urlShowing = ''
-            }
-        };
-        $(document).ready(function() {
-            $('#bigImageDiv').hide();
-        })
-    </script>
+    <script type="text/javascript" src="/js/birdshow.js"/>
     <lift:Pictures.search form="POST">
         <search:text/>
         <search:submit/>

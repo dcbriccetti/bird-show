@@ -11,6 +11,10 @@ import birdshow.util.{Group, Loggable}
 class Pictures extends Loggable {
   private object searchText extends RequestVar("")
   
+  def home(content: NodeSeq): NodeSeq = 
+    bind("home", content,
+      "randomUrl" -> <img src={Flickr.getRandomHomePhotoUrl}/>)
+  
   def search(content: NodeSeq): NodeSeq = {
     def processSearch() {
       debug("Searching for " + searchText.is)
@@ -22,17 +26,28 @@ class Pictures extends Loggable {
       )
   }
   
-  def showGalleries(content: NodeSeq): NodeSeq = {
-    
-    def bindGalleryWithId(content: NodeSeq, id: String): NodeSeq = {
-      bind("gal", content,
-        "heading" -> Text(Flickr.getSets.find(s => (s \ "@id").text == id) match {
-          case Some(photoSet) => (photoSet \ "title").text
-          case _ => ""
-        }),
-        "showAll" -> <a href="?">Show gallery index</a>,
-        "galleries" -> bindGroup(content, Flickr.getSetPhotos(id)))
+  def showShowPictures(content: NodeSeq): NodeSeq = {
+    def pImg(photoAndSize: Option[Tuple2[Node, PictureIdAndSizes]]): NodeSeq = photoAndSize match {
+      case Some((photo, pictureIdAndSizes)) => <img src={pictureIdAndSizes.getSmallSizeUrl}/>
+      case None => <span/>
     }
+
+    def bindGroup(content: NodeSeq, photosAndSizes: Flickr.PhotosSeq) = { 
+      Group.group(photosAndSizes).flatMap(pGroup => 
+      bind("item", chooseTemplate("photo", "list", content),
+        "img1"   -> pImg(pGroup._1), 
+        "title1" -> pTitle(pGroup._1),
+        "img2"   -> pImg(pGroup._2), 
+        "title2" -> pTitle(pGroup._2),
+        "img3"   -> pImg(pGroup._3), 
+        "title3" -> pTitle(pGroup._3)
+        ))
+    }
+    bind("gal", content,
+      "galleries" -> bindGroup(content, Flickr.getSetPhotosAndSizes(Flickr.getUser.showSetId)))
+  }
+  
+  def showGalleries(content: NodeSeq): NodeSeq = {
     
     def bindAllGalleries(content: NodeSeq): NodeSeq = {
       bind("gal", content,
@@ -47,6 +62,16 @@ class Pictures extends Loggable {
             "img3"   -> psAnchor(psGroup._3), 
             "title3" -> psTitle(psGroup._3)
             )))
+    }
+    
+    def bindGalleryWithId(content: NodeSeq, id: String): NodeSeq = {
+      bind("gal", content,
+        "heading" -> Text(Flickr.getSets.find(s => (s \ "@id").text == id) match {
+          case Some(photoSet) => (photoSet \ "title").text
+          case _ => ""
+        }),
+        "showAll" -> <a href="?">Show gallery index</a>,
+        "galleries" -> bindGroup(content, Flickr.getSetPhotosAndSizes(id)))
     }
     
     def bindSearchResults(content: NodeSeq): NodeSeq = {
@@ -68,7 +93,7 @@ class Pictures extends Loggable {
   
   def sets(content: NodeSeq): NodeSeq = <p>{getSetTitles.mkString(", ")}</p>
   
-  private def bindGroup(content: NodeSeq, photosAndSizes: Seq[Tuple2[Node, PictureIdAndSizes]]) = 
+  private def bindGroup(content: NodeSeq, photosAndSizes: Flickr.PhotosSeq) = 
     Group.group(photosAndSizes).flatMap(pGroup => 
     bind("item", chooseTemplate("photo", "list", content),
       "img1"   -> pImg(pGroup._1), 

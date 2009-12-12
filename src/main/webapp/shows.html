@@ -1,46 +1,37 @@
 <lift:surround with="default" at="content">
-
+                                                                              
     <p>Eleanor’s slide presentations are always enthusiastically and warmly received by audiences.
         They are interesting, informative, and often infused with a touch of humor.
         Shows usually last about an hour, and the subjects are chosen from the following:</p>
-    <table>
-        <tr>
-            <td>
-                <div class="slideshowCell">
-                    <div>
-                        <img src="media/shows/BhutaneseMonks.JPG"/>
-                    </div>
-                    Bhutan
-                </div>
-            </td>
-            <td>
-                <div class="slideshowCell">
-                    <div>
-                        <img src="media/shows/PolarBear6.JPG"/>
-                    </div>
-                    Polar Bears of Churchill
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="slideshowCell">
-                    <div>
-                        <img src="media/shows/SPPloverOnNest1.JPG"/>
-                    </div>
-                    Nesting Birds of Churchill
-                </div>
-            </td>
-            <td>
-                <div class="slideshowCell">
-                    <div>
-                        <img src="media/shows/HornedPuffin1.JPG"/>
-                    </div>
-                    Birds of the Pribilof Islands, AK
-                </div>
-            </td>
-        </tr>
-    </table>
+
+    <lift:Pictures.showShowPictures>
+        <table class="photos">
+            <gal:galleries>
+                <photo:list>
+                    <tr>
+                        <td>
+                            <item:img1/>
+                            <div class="title">
+                                <item:title1/>
+                            </div>
+                        </td>
+                        <td>
+                            <item:img2/>
+                            <div class="title">
+                                <item:title2/>
+                            </div>
+                        </td>
+                        <td>
+                            <item:img3/>
+                            <div class="title">
+                                <item:title3/>
+                            </div>
+                        </td>
+                    </tr>
+                </photo:list>
+            </gal:galleries>
+        </table>
+    </lift:Pictures.showShowPictures>
 
     <p>Additional shows include The Galapagos Islands, Africa, The Adventures
     of a Wildlife Photographer, Birds of California, Birds of North America, 
