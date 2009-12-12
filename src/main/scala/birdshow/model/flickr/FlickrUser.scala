@@ -20,7 +20,6 @@ case class FlickrUser(val userName: String, val topCollectionTitle: String,
   val sets: NodeSeq = allSets filter (s => setIds.contains(s \\ "@id"))
   
   def getSetIdFromTitle(title: String): String = {
-    info("looking for title " + title + " in all sets: " + allSets)
     val set = allSets.find(s => (s \ "title").text == title).get
     (set \ "@id").text
   } 

@@ -29,7 +29,6 @@ object Flickr extends Loggable {
   
   def getRandomHomePhotoUrl: String = {
     val photos = getHomePhotos
-    info("home photos: " + photos)
     val numPhotos = photos.size
     url(photos(new Random().nextInt(numPhotos)), "id", "")
   }
