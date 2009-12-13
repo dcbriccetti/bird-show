@@ -2,10 +2,9 @@ package birdshow.snippet
 
 import net.liftweb.util.Helpers._
 import xml.NodeSeq
-import birdshow.util.Loggable
 import birdshow.model.{PhotoAndSizes, Flickr}
 
-class Shows extends Loggable with PhotoRows {
+class Shows extends PhotoRows {
   
   def showShowPictures(content: NodeSeq): NodeSeq = {
     def pImg(photoAndSize: Option[PhotoAndSizes]): NodeSeq = photoAndSize match {

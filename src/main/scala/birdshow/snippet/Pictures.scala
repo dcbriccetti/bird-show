@@ -5,9 +5,8 @@ import xml.{Text, NodeSeq}
 import net.liftweb.util.{Full}
 import net.liftweb.http.{RequestVar, SHtml, S}
 import birdshow.model.Flickr
-import birdshow.util.{Loggable}
 
-class Pictures extends Loggable with PhotoRows {
+class Pictures extends PhotoRows {
   private object searchText extends RequestVar("")
   
   def search(content: NodeSeq) = bind("search", content,

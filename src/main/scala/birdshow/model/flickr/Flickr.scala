@@ -4,11 +4,11 @@ import java.net.URLEncoder
 import java.util.Random
 import xml.NodeSeq
 import flickr.{Photo, PhotoSet, FlickrUser, PictureIdAndSizes}
-import birdshow.util.{XmlFetcher, Parallelizer, Loggable}
+import birdshow.util.{XmlFetcher, Parallelizer}
 
 case class PhotoAndSizes(val photo: Photo, val pictureIdAndSizes: PictureIdAndSizes)
 
-object Flickr extends Loggable {
+object Flickr {
 
   private val urlPart1 = "http://api.flickr.com/services/rest/?method=flickr."
   private val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
@@ -35,7 +35,7 @@ object Flickr extends Loggable {
     photos(new Random().nextInt(numPhotos)).url("")
   }
 
-  def getSets: Seq[PhotoSet] = getUser.sets
+  def getSets: Seq[PhotoSet] = getUser.photoSets
 
   def getFromFlickr(urlBody: String): NodeSeq = XmlFetcher.get(urlPart1 + urlBody + apiKey)
   
