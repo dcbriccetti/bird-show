@@ -18,14 +18,13 @@ class Boot {
     LiftRules.addToPackages("birdshow")
 
     // Build SiteMap
-    val entries = List(
-        Menu(Loc("Home", List("index"), "Home")), 
-        Menu(Loc("Biography", List("bio"), "Biography")), 
-        Menu(Loc("Galleries", List("galleries"), "Galleries")),
-        Menu(Loc("Shows", List("shows"), "Shows")),
-        Menu(Loc("Prints", List("prints"), "Prints"))
-      )
-    LiftRules.setSiteMap(SiteMap(entries:_*))
+    LiftRules.setSiteMap(SiteMap(
+      Menu(Loc("Home",      List("index"    ), "Home"     )),
+      Menu(Loc("Biography", List("bio"      ), "Biography")),
+      Menu(Loc("Galleries", List("galleries"), "Galleries")),
+      Menu(Loc("Shows",     List("shows"    ), "Shows"    )),
+      Menu(Loc("Prints",    List("prints"   ), "Prints"   ))
+      ))
     LiftRules.early.append(makeUtf8)
     LiftRules.enableLiftGC = false
     

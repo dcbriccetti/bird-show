@@ -1,0 +1,76 @@
+body {
+    font-size: 100%;
+    background-color: #ebebeb;
+}
+        
+p {
+    margin-top: inherit;
+    margin-bottom: 1.3em
+}
+        
+p + p {
+    text-indent: inherit;
+    margin-top: inherit;
+}
+        
+.sidebar ul {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.sidebar ul li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    border-bottom: none;
+}
+
+.sidebar ul li a, .sidebar ul li span {
+    display: block;
+    padding: 3px;
+    text-indent: 10px;
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    background-color: #eee;
+}
+        
+table.photos td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 2em 2em 0 0;
+}
+        
+div.galHead {
+    font-weight: bold;
+    font-size: 140%;
+}
+        
+table.priceList {
+    width: 30em;
+}
+
+.homePicture {
+    text-align: center; 
+    margin-bottom: 1em;
+}
+
+.bioPic {
+    float: right;
+}
+
+.photoCredit {
+    font-size: 75%;
+    margin-bottom: .5em;
+}
+        
+#bigImageDiv {
+    position: fixed;
+    top: 6em;
+    left: 2em;
+    background-color: darkgray;
+    padding: 1em;
+}
