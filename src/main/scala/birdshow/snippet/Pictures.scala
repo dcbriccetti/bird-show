@@ -22,8 +22,8 @@ class Pictures extends Loggable with PhotoRows {
       "photoRows" -> bindPhotoRows(content, Flickr.getSets, psAnchor, psTitle)) 
 
     def bindGalleryWithId(content: NodeSeq, id: String) = bind("gal", content,
-        "heading" -> Text(Flickr.getSets.find(s => (s \ "@id").text == id) match {
-          case Some(photoSet) => (photoSet \ "title").text
+        "heading" -> Text(Flickr.getSets.find(_.id == id) match {
+          case Some(photoSet) => photoSet.title
           case _ => ""
         }),
         "showAll" -> <a href="?">Show gallery index</a>,
