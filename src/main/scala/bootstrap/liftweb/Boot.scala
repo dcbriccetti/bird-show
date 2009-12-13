@@ -18,7 +18,7 @@ class Boot {
     // Build SiteMap
     val entries =
       Menu(Loc("Home",      List("index"    ), "Home"     )) ::
-      Menu(Loc("Biography", List("bio"      ), "Biography")) ::
+      Menu(Loc("About",     List("about"    ), "About"    )) ::
       Menu(Loc("Galleries", List("galleries"), "Galleries")) ::
       Menu(Loc("Shows",     List("shows"    ), "Shows"    )) ::
       Menu(Loc("Prints",    List("prints"   ), "Prints"   )) :: Nil
