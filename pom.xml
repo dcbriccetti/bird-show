@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.davebsoft</groupId>
   <artifactId>birdshow</artifactId>
@@ -8,14 +12,20 @@
   <name>birdshow</name>
   <inceptionYear>2009</inceptionYear>
   <properties>
-    <scala.version>2.7.3</scala.version>
+    <scala.version>2.7.7</scala.version>
   </properties>
 
   <repositories>
     <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-Tools Maven2 Repository</name>
+      <id>scala-tools.releases</id>
+      <name>Scala-Tools Maven2 Repository for Releases</name>
       <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+    <repository>
+      <id>scala-tools.snapshots</id>
+      <name>Scala-Tools Maven2 Repository for Snapshots</name>
+      <url>http://scala-tools.org/repo-snapshots</url>
+      <snapshots/>
     </repository>
   </repositories>
 
@@ -29,19 +39,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-    <dependency>
       <groupId>net.liftweb</groupId>
-      <artifactId>lift-core</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.4.2.0</version>
+      <artifactId>lift-webkit</artifactId>
+      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
       <artifactId>jetty</artifactId>
-      <version>[6.1.6,)</version>
+      <version>[6.1.6,7.0)</version>
       <scope>test</scope>
     </dependency>
     <!-- for LiftConsole -->
@@ -77,17 +77,23 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
+        <version>2.12.2</version>
         <executions>
           <execution>
+            <id>scala-compile</id>
+            <phase>process-resources</phase>
             <goals>
               <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>scala-testCompile</id>
+            <phase>process-test-resources</phase>
+            <goals>
               <goal>testCompile</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -113,22 +119,28 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
           <downloadSources>true</downloadSources>
-          <excludes>
-            <exclude>org.scala-lang:scala-library</exclude>
-          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <additionalProjectnatures>
+            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
+          </additionalProjectnatures>
+          <additionalBuildcommands>
+            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
+          </additionalBuildcommands>
           <classpathContainers>
             <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
           </classpathContainers>
-          <projectnatures>
-            <java.lang.String>ch.epfl.lamp.sdt.core.scalanature</java.lang.String>
-            <java.lang.String>org.eclipse.jdt.core.javanature</java.lang.String>
-          </projectnatures>
-          <buildcommands>
-            <java.lang.String>ch.epfl.lamp.sdt.core.scalabuilder</java.lang.String>
-          </buildcommands>
         </configuration>
       </plugin>
     </plugins>
@@ -138,9 +150,7 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
-        <configuration>
-          <scalaVersion>${scala.version}</scalaVersion>
-        </configuration>
+        <version>2.12.2</version>
       </plugin>
     </plugins>
   </reporting>
