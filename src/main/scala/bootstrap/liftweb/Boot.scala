@@ -1,7 +1,5 @@
 package bootstrap.liftweb
 
-import _root_.net.liftweb.util._
-import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
 import _root_.net.liftweb.sitemap._
@@ -28,6 +26,12 @@ class Boot {
 
     LiftRules.early.append(makeUtf8)
     LiftRules.enableLiftGC = false
+    
+    ResourceServer.allow {
+      case "css" :: _ => true
+      case "js" :: _ => true
+      case "media" :: _ => true
+    }
 
     Flickr.addUser(
       LiftRules.context.initParam("flickrUserName") openOr "",
