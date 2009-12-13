@@ -5,9 +5,6 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http.LiftRules
 
 class GeneralInfo {
-  def info(content: NodeSeq): NodeSeq = {
-      bind("info", content,
-        "title" -> LiftRules.context.initParam("appTitle").openOr(""))
-  }
-
+  def info(content: NodeSeq) = bind("info", content,
+    "title" -> LiftRules.context.initParam("appTitle").openOr(""))
 }

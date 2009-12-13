@@ -20,17 +20,19 @@ class Pictures extends PhotoRows {
       "showAll" -> "",
       "photoRows" -> bindPhotoRows(content, Flickr.getSets, psAnchor, psTitle))
 
+    val showGalleryIndex = <a href="?">Show gallery index</a>
+    
     def bindGalleryWithId(content: NodeSeq, id: String) = bind("gal", content,
         "heading" -> Text(Flickr.getSets.find(_.id == id) match {
           case Some(photoSet) => photoSet.title
           case _ => ""
         }),
-        "showAll" -> <a href="?">Show gallery index</a>,
+        "showAll" -> showGalleryIndex,
         "photoRows" -> bindPhotoRows(content, Flickr.getSetPhotosAndSizes(id), pImg, pTitle))
 
     def bindSearchResults(content: NodeSeq) = bind("gal", content,
         "heading" -> Text("Results for " + searchText.is),
-        "showAll" -> <a href="?">Show gallery index</a>,
+        "showAll" -> showGalleryIndex,
         "photoRows" -> bindPhotoRows(content, Flickr.searchPhotos(searchText.is), pImg, pTitle))
 
     if (searchText.is != "")

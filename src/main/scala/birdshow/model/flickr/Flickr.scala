@@ -14,6 +14,8 @@ object Flickr {
   private val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
 
   private var users = List[FlickrUser]()
+  
+  startReloadThread()
 
   def addUser(userName: String, topCollection: String, homeSet: String, showSet: String) = 
     users ::= FlickrUser(userName, topCollection, homeSet, showSet)
@@ -31,8 +33,7 @@ object Flickr {
   
   def getRandomHomePhotoUrl: String = {
     val photos = getHomePhotos
-    val numPhotos = photos.size
-    photos(new Random().nextInt(numPhotos)).url("")
+    photos(new Random().nextInt(photos.size)).url("")
   }
 
   def getSets: Seq[PhotoSet] = getUser.photoSets
@@ -56,6 +57,17 @@ object Flickr {
       (id: String) => PictureIdAndSizes.fromNode(id, getFromFlickr("photos.getSizes&photo_id=" + id)))
 
     photos.map(p => PhotoAndSizes(p, idAndSizes.find(_.id == p.id).get))
+  }
+
+  private def startReloadThread() {
+    new Thread(new Runnable {
+      def run = {
+        while(true) {
+          Thread.sleep(1000 * 60 * 30)
+          users.foreach(_.reload())
+        }
+      }
+    }).start
   }
 }
 
