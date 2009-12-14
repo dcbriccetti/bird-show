@@ -15,8 +15,6 @@ object Flickr {
 
   private var users = List[FlickrUser]()
   
-  startReloadThread()
-
   def addUser(userName: String, topCollection: String, homeSet: String, showSet: String) = 
     users ::= FlickrUser(userName, topCollection, homeSet, showSet)
   
@@ -59,15 +57,5 @@ object Flickr {
     photos.map(p => PhotoAndSizes(p, idAndSizes.find(_.id == p.id).get))
   }
 
-  private def startReloadThread() {
-    new Thread(new Runnable {
-      def run = {
-        while(true) {
-          Thread.sleep(1000 * 60 * 30)
-          users.foreach(_.reload())
-        }
-      }
-    }).start
-  }
 }
 

@@ -13,7 +13,7 @@ class Photo(val id: String, val title: String, val urlBase: String, val secret: 
 
 object Photo extends BaseUrl {
   def apply(xml: Node): Photo = {
-    new Photo((xml \ "@id").text, (xml \ "title").text, createBaseUrl(xml),
+    new Photo((xml \ "@id").text, (xml \ "@title").text, createBaseUrl(xml),
         (xml \ "@secret").text)
   }
 }

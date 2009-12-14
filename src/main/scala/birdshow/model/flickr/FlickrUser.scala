@@ -3,6 +3,7 @@ package birdshow.model.flickr
 import xml.NodeSeq
 import net.liftweb.util.Log
 import birdshow.model.Flickr
+import java.util.Date
 
 case class FlickrUser(val userName: String, val topCollectionTitle: String, 
   val homeSetTitle: String, val showSetTitle: String) {
@@ -11,21 +12,24 @@ case class FlickrUser(val userName: String, val topCollectionTitle: String,
       Flickr.enc(userName)) \ "user" \ "@nsid").text
 
   private var allPhotoSets: Seq[PhotoSet] = _
-  var photoSets: Seq[PhotoSet] = _
+  var _photoSets: Seq[PhotoSet] = _
+  var lastLoadTime: Long = _
+  
+  def photoSets: Seq[PhotoSet] = {
+    if ((new Date).getTime - lastLoadTime > 1000 * 60 * 30) {
+      loadData()
+    }
+    _photoSets
+  }
 
-  buildData()
+  loadData()
   
   private def getSetIdFromTitle(title: String) = allPhotoSets.find(_.title == title).get.id
 
   val homeSetId: String = getSetIdFromTitle(homeSetTitle)
   val showSetId: String = getSetIdFromTitle(showSetTitle)
 
-  def reload() = {
-    Log.info("reloading")
-    buildData()
-  }
-  
-  private def buildData() {
+  private def loadData() {
     val collections: NodeSeq = 
       Flickr.getFromFlickr("collections.getTree&user_id=" + userId) \\ "collection"
 
@@ -35,7 +39,9 @@ case class FlickrUser(val userName: String, val topCollectionTitle: String,
     allPhotoSets = (Flickr.getFromFlickr("photosets.getList&user_id=" + userId) \ 
       "photosets" \ "photoset").map(PhotoSet.apply)
   
-    photoSets = allPhotoSets filter (s => topCollectionSetIds.contains(s.id))
+    _photoSets = allPhotoSets filter (s => topCollectionSetIds.contains(s.id))
+    
+    lastLoadTime = (new Date).getTime
   }
 }
 
