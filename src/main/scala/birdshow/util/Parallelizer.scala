@@ -1,19 +1,25 @@
-// TODO    This is copied from TalkingPuffin. Don’t modify.
-
 package birdshow.util
 
 import java.util.concurrent.{ExecutorCompletionService, Callable, Executors}
+import net.liftweb.util.Log
 
-object Parallelizer {
+class Parallelizer(numThreads: Int) {
+  private var pool = Executors.newFixedThreadPool(numThreads)
+  
   /**
-   * Runs, in the number of threads requested, the function f, giving it each A of args, returning a List[T]
+   * Runs the function f in multiple threads, giving it each A of args, returning a List[T]
    */
-  def run[T,A](numThreads: Int, args: Seq[A], f: (A) => T): List[T] = {
-    val pool = Executors.newFixedThreadPool(numThreads)
+  def run[T,A](args: Seq[A], f: (A) => T): List[T] = {
     val completionService = new ExecutorCompletionService[T](pool)
-    args.foreach(arg => completionService.submit(new Callable[T] {def call = f(arg)}))
-    val result = args map(_ => completionService.take.get)
+    args.foreach(arg => 
+      completionService.submit(new Callable[T] {
+        def call = f(arg)
+      }))
+    (args map (_ => completionService.take.get)).toList
+  }
+  
+  def shutDown() = {
+    Log.debug("Parallelizer shutting down")
     pool.shutdown
-    result.toList
   }
 }

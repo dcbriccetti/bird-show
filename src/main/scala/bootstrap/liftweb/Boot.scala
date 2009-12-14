@@ -26,6 +26,7 @@ class Boot {
 
     LiftRules.early.append(makeUtf8)
     LiftRules.enableLiftGC = false
+    LiftRules.unloadHooks.append(Flickr.shutDown)
     
     ResourceServer.allow {
       case "css" :: _ => true

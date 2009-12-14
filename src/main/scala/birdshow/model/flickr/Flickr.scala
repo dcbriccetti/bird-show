@@ -12,6 +12,7 @@ object Flickr {
 
   private val urlPart1 = "http://api.flickr.com/services/rest/?method=flickr."
   private val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
+  private val parallelizer = new Parallelizer(20) 
 
   private var users = List[FlickrUser]()
   
@@ -44,6 +45,8 @@ object Flickr {
     "photosets.getPhotos&user_id=" + getUser.userId + "&photoset_id=" + setId
 
   def getUser = users(0)  // TODO devise a way to identify one among multiple users
+  
+  def shutDown() = parallelizer.shutDown()
 
   private def getPhotosFromFlickr(urlBody: String, tag: String): Seq[Photo] = 
     (getFromFlickr(urlBody + "&per_page=500") \ tag \ "photo").map(Photo.apply)
@@ -51,7 +54,7 @@ object Flickr {
   private def getPhotosAndSizesFromFlickr(urlBody: String, tag: String): Seq[PhotoAndSizes] = {
     val photos = getPhotosFromFlickr(urlBody, tag)
 
-    val idAndSizes = Parallelizer.run(20, photos.map(_.id),
+    val idAndSizes = parallelizer.run(photos.map(_.id),
       (id: String) => PictureIdAndSizes.fromNode(id, getFromFlickr("photos.getSizes&photo_id=" + id)))
 
     photos.map(p => PhotoAndSizes(p, idAndSizes.find(_.id == p.id).get))
