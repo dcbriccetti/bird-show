@@ -1,13 +1,13 @@
 <lift:surround with="default" at="content">
     <script type="text/javascript" src="/classpath/js/birdshow.js"/>
-    <lift:Pictures.search form="POST">
+    <lift:Galleries.search form="POST">
         <search:text/>
         <search:submit/>
-    </lift:Pictures.search>
+    </lift:Galleries.search>
 
     <div id="bigImageDiv"><img id="bigImage" onclick="BIRDSHOW.hideBig();"/></div>
 
-    <lift:Pictures.showGalleries>
+    <lift:Galleries.showGalleries>
         <div class="galHead">
             <gal:heading/>
         </div>
@@ -36,7 +36,7 @@
                 </tr>
             </gal:photoRows>
         </table>
-    </lift:Pictures.showGalleries>
+    </lift:Galleries.showGalleries>
 
     <div>©2009 Eleanor Briccetti</div>
 

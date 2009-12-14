@@ -8,11 +8,8 @@ class Shows extends PhotoRows {
   
   def showShowPictures(content: NodeSeq): NodeSeq = {
     
-    def makeImgTag(photoAndSize: Option[PhotoAndSizes]): NodeSeq = photoAndSize match {
-      case Some(PhotoAndSizes(photo, pictureIdAndSizes)) => 
-          <img src={pictureIdAndSizes.getSmallSizeUrl}/>
-      case None => <span/>
-    }
+    def makeImgTag(photoAndSize: PhotoAndSizes): NodeSeq =
+      <img src={photoAndSize.pictureIdAndSizes.getSmallSizeUrl}/>
 
     bind("gal", content, "photoRows" -> 
       bindPhotoRows(content, Flickr.getSetPhotosAndSizes(
