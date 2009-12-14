@@ -6,11 +6,11 @@ import net.liftweb.common.{Full}
 import net.liftweb.http.{RequestVar, SHtml, S}
 import birdshow.model.Flickr
 
-class Pictures extends PhotoRows {
+class Galleries extends PhotoRows {
   private object searchText extends RequestVar("")
 
   def search(content: NodeSeq) = bind("search", content,
-    "text" -> SHtml.text(searchText.is, searchText(_)),
+    "text"   -> SHtml.text(searchText.is, searchText(_)),
     "submit" -> SHtml.submit("Search", () => {}))
 
   def showGalleries(content: NodeSeq): NodeSeq = {
@@ -23,17 +23,17 @@ class Pictures extends PhotoRows {
     val showGalleryIndex = <a href="?">Show gallery index</a>
     
     def bindGalleryWithId(content: NodeSeq, id: String) = bind("gal", content,
-        "heading" -> Text(Flickr.getSets.find(_.id == id) match {
-          case Some(photoSet) => photoSet.title
-          case _ => ""
-        }),
-        "showAll" -> showGalleryIndex,
-        "photoRows" -> bindPhotoRows(content, Flickr.getSetPhotosAndSizes(id), pImg))
+      "heading" -> Text(Flickr.getSets.find(_.id == id) match {
+        case Some(photoSet) => photoSet.title
+        case _ => ""
+      }),
+      "showAll" -> showGalleryIndex,
+      "photoRows" -> bindPhotoRows(content, Flickr.getSetPhotosAndSizes(id), pImg))
 
     def bindSearchResults(content: NodeSeq) = bind("gal", content,
-        "heading" -> Text("Results for " + searchText.is),
-        "showAll" -> showGalleryIndex,
-        "photoRows" -> bindPhotoRows(content, Flickr.searchPhotos(searchText.is), pImg))
+      "heading" -> Text("Results for " + searchText.is),
+      "showAll" -> showGalleryIndex,
+      "photoRows" -> bindPhotoRows(content, Flickr.searchPhotos(searchText.is), pImg))
 
     if (searchText.is != "")
       bindSearchResults(content)

@@ -1,20 +1,23 @@
 package birdshow.model.flickr
 
 import xml.NodeSeq
-import net.liftweb.util.Log
 import birdshow.model.Flickr
 import java.util.Date
 
+/**
+ * A Flickr user, upon which an instance of this application is based. In a future
+ * version, multiple instances will be supported.
+ */
 case class FlickrUser(val userName: String, val topCollectionTitle: String, 
   val homeSetTitle: String, val showSetTitle: String) {
-  
+
   val userId: String = (Flickr.getFromFlickr("people.findByUsername&username=" +
       Flickr.enc(userName)) \ "user" \ "@nsid").text
 
   private var allPhotoSets: Seq[PhotoSet] = _
-  var _photoSets: Seq[PhotoSet] = _
-  var lastLoadTime: Long = _
-  
+  private var _photoSets: Seq[PhotoSet] = _
+  private var lastLoadTime: Long = _
+
   def photoSets: Seq[PhotoSet] = {
     if ((new Date).getTime - lastLoadTime > 1000 * 60 * 30) {
       loadData()
