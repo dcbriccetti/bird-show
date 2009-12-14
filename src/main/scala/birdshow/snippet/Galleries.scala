@@ -1,8 +1,8 @@
 package birdshow.snippet
 
+import xml.NodeSeq
 import net.liftweb.util.Helpers._
-import xml.{Text, NodeSeq}
-import net.liftweb.common.{Full}
+import net.liftweb.common.Full
 import net.liftweb.http.{RequestVar, SHtml, S}
 import birdshow.model.Flickr
 
