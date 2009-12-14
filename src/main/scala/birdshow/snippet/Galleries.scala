@@ -23,7 +23,7 @@ class Galleries extends PhotoRows {
     val showGalleryIndex = <a href="?">Show gallery index</a>
     
     def bindGalleryWithId(content: NodeSeq, id: String) = bind("gal", content,
-      "heading" -> Text(Flickr.getSets.find(_.id == id) match {
+      "heading" -> (Flickr.getSets.find(_.id == id) match {
         case Some(photoSet) => photoSet.title
         case _ => ""
       }),
@@ -31,7 +31,7 @@ class Galleries extends PhotoRows {
       "photoRows" -> bindPhotoRows(content, Flickr.getSetPhotosAndSizes(id), photoExpandableImage))
 
     def bindSearchResults(content: NodeSeq) = bind("gal", content,
-      "heading" -> Text("Results for " + searchText.is),
+      "heading" -> ("Results for " + searchText.is),
       "showAll" -> showGalleryIndex,
       "photoRows" -> bindPhotoRows(content, Flickr.searchPhotos(searchText.is), photoExpandableImage))
 
