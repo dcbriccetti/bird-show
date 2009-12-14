@@ -6,8 +6,9 @@ import xml.NodeSeq
 import flickr.{Photo, PhotoSet, FlickrUser, PictureIdAndSizes}
 import birdshow.util.{XmlFetcher, Parallelizer}
 
-case class PhotoAndSizes(val photo: Photo, val pictureIdAndSizes: PictureIdAndSizes)
-
+/**
+ * Fetches collection, set and photo information from Flickr.
+ */
 object Flickr {
 
   private val urlPart1 = "http://api.flickr.com/services/rest/?method=flickr."
@@ -15,7 +16,7 @@ object Flickr {
   private val parallelizer = new Parallelizer(20) 
 
   private var users = List[FlickrUser]()
-  
+
   def addUser(userName: String, topCollection: String, homeSet: String, showSet: String) = 
     users ::= FlickrUser(userName, topCollection, homeSet, showSet)
   
@@ -24,11 +25,6 @@ object Flickr {
 
   def getSetPhotosAndSizes(setId: String): Seq[PhotoAndSizes] =
     getPhotosAndSizesFromFlickr(getSetPhotosUrlBody(setId), "photoset")
-  
-  private def getSetPhotos(setId: String): Seq[Photo] = 
-    getPhotosFromFlickr(getSetPhotosUrlBody(setId), "photoset")
-  
-  def getHomePhotos: Seq[Photo] = getSetPhotos(getUser.homeSetId)
   
   def getRandomHomePhotoUrl: String = {
     val photos = getHomePhotos
@@ -41,15 +37,17 @@ object Flickr {
   
   def enc(text: String) = URLEncoder.encode(text, "UTF-8")
 
-  private def getSetPhotosUrlBody(setId: String) = 
-    "photosets.getPhotos&user_id=" + getUser.userId + "&photoset_id=" + setId
-
   def getUser = users(0)  // TODO devise a way to identify one among multiple users
   
   def shutDown() = parallelizer.shutDown()
 
-  private def getPhotosFromFlickr(urlBody: String, tag: String): Seq[Photo] = 
-    (getFromFlickr(urlBody + "&per_page=500") \ tag \ "photo").map(Photo.apply)
+  private def getHomePhotos: Seq[Photo] = getSetPhotos(getUser.homeSetId)
+  
+  private def getSetPhotosUrlBody(setId: String) = 
+    "photosets.getPhotos&user_id=" + getUser.userId + "&photoset_id=" + setId
+
+  private def getSetPhotos(setId: String): Seq[Photo] = 
+    getPhotosFromFlickr(getSetPhotosUrlBody(setId), "photoset")
   
   private def getPhotosAndSizesFromFlickr(urlBody: String, tag: String): Seq[PhotoAndSizes] = {
     val photos = getPhotosFromFlickr(urlBody, tag)
@@ -60,5 +58,7 @@ object Flickr {
     photos.map(p => PhotoAndSizes(p, idAndSizes.find(_.id == p.id).get))
   }
 
+  private def getPhotosFromFlickr(urlBody: String, tag: String): Seq[Photo] = 
+    (getFromFlickr(urlBody + "&per_page=500") \ tag \ "photo").map(Photo.apply)
+  
 }
-

@@ -4,26 +4,25 @@ import xml.{NodeSeq}
 import net.liftweb.util.Helpers._
 import birdshow.util.Group
 import birdshow.model.flickr.{PhotoSet}
-import birdshow.model.PhotoAndSizes
+import birdshow.model.{Titled, PhotoAndSizes}
 
 trait PhotoRows {
 
-  def bindPhotoRows[T](content: NodeSeq, photos: Seq[T], 
-      img: (Option[T]) => NodeSeq, title: (Option[T]) => String) =  
+  def bindPhotoRows[T <: Titled](content: NodeSeq, photos: Seq[T], img: (Option[T]) => NodeSeq) =  
     Group.group(photos).flatMap(g => 
       bind("item", chooseTemplate("gal", "photoRows", content),
-        "img1"   -> img  (g._1), 
-        "title1" -> title(g._1),
-        "img2"   -> img  (g._2), 
-        "title2" -> title(g._2),
-        "img3"   -> img  (g._3), 
-        "title3" -> title(g._3)))
+        "img1"   -> img   (g._1), 
+        "title1" -> pTitle(g._1),
+        "img2"   -> img   (g._2), 
+        "title2" -> pTitle(g._2),
+        "img3"   -> img   (g._3), 
+        "title3" -> pTitle(g._3)))
 
   protected def pImg(photoAndSize: Option[PhotoAndSizes]): NodeSeq = photoAndSize match {
-    case Some(PhotoAndSizes(photo, pictureIdAndSizes)) =>
+    case Some(PhotoAndSizes(photo, sizes)) =>
       <a href="#">
-        <img onclick={"BIRDSHOW.showBig('" + pictureIdAndSizes.getPreferredSizeUrl + "'); return false;"} 
-            src={pictureIdAndSizes.getSmallSizeUrl}/>
+        <img onclick={"BIRDSHOW.showBig('" + sizes.getPreferredSizeUrl + "'); return false;"} 
+            src={sizes.getSmallSizeUrl}/>
       </a>
     case None => <p/>
   }
@@ -34,12 +33,7 @@ trait PhotoRows {
     case None => <p/>
   }
   
-  protected def pTitle(photoAndSizes: Option[PhotoAndSizes]): String = photoAndSizes match {
-    case Some(ps) => ps.photo.title
-    case None => ""
-  }
-  
-  protected def psTitle(photoSet: Option[PhotoSet]): String = photoSet match {
+  private def pTitle(photoAndSizes: Option[Titled]): String = photoAndSizes match {
     case Some(ps) => ps.title
     case None => ""
   }
