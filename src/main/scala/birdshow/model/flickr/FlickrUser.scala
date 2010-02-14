@@ -6,7 +6,8 @@ import java.util.Date
 
 /**
  * A Flickr user, upon which an instance of this application is based. In a future
- * version, multiple instances will be supported.
+ * version, multiple instances will be supported. Contains all the relevant 
+ * photo information for the user, from Flickr. 
  */
 case class FlickrUser(val userName: String, val topCollectionTitle: String, 
   val homeSetTitle: String, val showSetTitle: String) {
@@ -37,7 +38,8 @@ case class FlickrUser(val userName: String, val topCollectionTitle: String,
       Flickr.getFromFlickr("collections.getTree&user_id=" + userId) \\ "collection"
 
     val topCollectionSetIds: Seq[String] = ((collections filter (
-      c => (c \ "@title") == topCollectionTitle)) \\ "set").map(set => (set \ "@id").text)
+      c => (c \ "@title") == topCollectionTitle)) \\ "set").
+      map(set => (set \ "@id").text)
 
     allPhotoSets = (Flickr.getFromFlickr("photosets.getList&user_id=" + userId) \ 
       "photosets" \ "photoset").map(PhotoSet.apply)
