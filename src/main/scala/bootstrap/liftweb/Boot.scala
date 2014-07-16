@@ -1,10 +1,10 @@
 package bootstrap.liftweb
 
-import _root_.net.liftweb.http._
-import _root_.net.liftweb.http.provider._
-import _root_.net.liftweb.sitemap._
-import _root_.net.liftweb.sitemap.Loc._
-import _root_.birdshow.model._
+import net.liftweb.http._
+import net.liftweb.http.provider._
+import net.liftweb.sitemap._
+import net.liftweb.sitemap.Loc._
+import birdshow.model._
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -44,8 +44,6 @@ class Boot {
   /**
    * Force the request to be UTF-8
    */
-  private def makeUtf8(req: HTTPRequest) {
-    req.setCharacterEncoding("UTF-8")
-  }
+  private def makeUtf8(req: HTTPRequest) = req.setCharacterEncoding("UTF-8")
 
 }

@@ -11,7 +11,7 @@ import birdshow.util.{XmlFetcher, Parallelizer}
  */
 object Flickr {
 
-  private val urlPart1 = "http://api.flickr.com/services/rest/?method=flickr."
+  private val urlPart1 = "https://api.flickr.com/services/rest/?method=flickr."
   private val apiKey = "&api_key=979e4a1aa2eb498c845415e254e70f53"
   private val parallelizer = new Parallelizer(20) 
 
